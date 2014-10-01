@@ -4,6 +4,7 @@
 
 using namespace std;
 using boost::lexical_cast;
+using namespace ptu_kongsberg_oe10;
 
 static int usage(string const& argv0)
 {
@@ -33,7 +34,17 @@ int main(int argc, char** argv)
     string cmd = argv[3];
 
     if (cmd == "status")
-        throw runtime_error("not implemented");
+    {
+        Status status = driver.getStatus(device_id);
+        cout
+            << "Capabilities\n"
+            << "  Pan: " << status.ptu.pan << "\n"
+            << "  Tilt: " << status.ptu.tilt << "\n"
+            << "Temperature: " << status.temperature << "\n"
+            << "Humidity: " << status.humidity << "\n"
+            << "Pan: " << status.pan.getDeg() << "\n"
+            << "Tilt: " << status.tilt.getDeg() << endl;
+    }
     else
     {
         cerr << "Unrecognized command " << cmd << endl << endl;
