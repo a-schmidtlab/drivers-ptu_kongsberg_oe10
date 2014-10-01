@@ -7,7 +7,11 @@ using namespace ptu_kongsberg_oe10;
 using boost::lexical_cast;
 
 Driver::Driver()
-    : iodrivers_base::Driver(Packet::MAX_PACKET_SIZE) {}
+    : iodrivers_base::Driver(Packet::MAX_PACKET_SIZE)
+{
+    setReadTimeout(base::Time::fromSeconds(2));
+    setWriteTimeout(base::Time::fromSeconds(2));
+}
 
 Status Driver::getStatus(int device_id)
 {
