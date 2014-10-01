@@ -75,6 +75,8 @@ namespace ptu_kongsberg_oe10
         std::string getCommandAsString() const;
 
         static std::string parseNACKError(byte errorByte);
+
+        static std::string kongsberg_com(byte const* buffer, int size);
     };
 }
 

@@ -1,6 +1,7 @@
 #include <ptu_kongsberg_oe10/Packet.hpp>
 #include <boost/lexical_cast.hpp>
 #include <base/Logging.hpp>
+#include <iodrivers_base/Driver.hpp>
 
 using namespace std;
 using namespace ptu_kongsberg_oe10;
@@ -84,8 +85,27 @@ byte Packet::computeChecksumInd(byte checksum)
     return 'G';
 }
 
+std::string Packet::kongsberg_com(boost::uint8_t const* buffer, int buffer_size)
+{
+    ostringstream str;
+    for (int i = 0; i < buffer_size; ++i)
+    {
+        if (buffer[i] == '<')
+            str << '<';
+        else if (buffer[i] == ':')
+            str << ':';
+        else if (buffer[i] == '>')
+            str << '>';
+        else
+            str << iodrivers_base::Driver::binary_com(buffer + i, 1);
+    }
+    return str.str();
+}
+
 int Packet::extractPacket(byte const* buffer, int size)
 {
+    LOG_DEBUG_S << "parsing " << size << " bytes: " << kongsberg_com(buffer, size);
+
     byte const BRACKET_OPEN = '<';
     byte const COLON = ':';
     byte const BRACKET_CLOSE = '>';

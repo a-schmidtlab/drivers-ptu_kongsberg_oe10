@@ -1,3 +1,4 @@
+#include <base/Logging.hpp>
 #include <ptu_kongsberg_oe10/Driver.hpp>
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>
@@ -77,6 +78,7 @@ void Driver::writePacket(Packet const& packet)
 {
     writeBuffer.clear();
     packet.marshal(writeBuffer);
+    LOG_DEBUG_S << "writing " << writeBuffer.size() << " bytes: " << Packet::kongsberg_com(&writeBuffer[0], writeBuffer.size());
     iodrivers_base::Driver::writePacket(&writeBuffer[0], writeBuffer.size());
 }
 
@@ -84,3 +86,4 @@ int Driver::extractPacket(boost::uint8_t const* buffer, size_t size) const
 {
     return Packet::extractPacket(buffer, size);
 }
+
