@@ -40,7 +40,7 @@ int main(int argc, char** argv)
             << "Capabilities\n"
             << "  Pan: " << status.ptu.pan << "\n"
             << "  Tilt: " << status.ptu.tilt << "\n"
-            << "Temperature: " << status.temperature << "\n"
+            << "Temperature: " << status.temperature.getCelsius() << "\n"
             << "Humidity: " << status.humidity << "\n"
             << "Pan: " << status.pan.getDeg() << "\n"
             << "Tilt: " << status.tilt.getDeg() << endl;
