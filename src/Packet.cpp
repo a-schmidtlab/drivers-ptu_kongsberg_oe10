@@ -186,7 +186,7 @@ void Packet::validateResponseFor(Packet const& cmd)
         throw std::runtime_error("expecting a ACK/NAK packet but got " + iodrivers_base::Driver::binary_com(command, command_size));
     }
 
-    if (from != cmd.to)
+    if (cmd.to != BROADCAST && from != cmd.to)
     {
         throw std::runtime_error("expected a response from device ID " +
                 lexical_cast<string>(cmd.to) + " but got one from " +
