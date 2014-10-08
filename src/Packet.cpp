@@ -181,10 +181,9 @@ Packet Packet::parse(byte const* buffer, int size, bool validate)
 
 void Packet::validateResponseFor(Packet const& cmd)
 {
-    if (command_size != 1 || command[0] != ACK || command[0] != NAK)
+    if (command_size != 1 || (command[0] != ACK && command[0] != NAK))
     {
-        throw std::runtime_error("expecting a ACK/NAK packet but got " +
-                string(reinterpret_cast<char const*>(command), command_size));
+        throw std::runtime_error("expecting a ACK/NAK packet but got " + iodrivers_base::Driver::binary_com(command, command_size));
     }
 
     if (from != cmd.to)
