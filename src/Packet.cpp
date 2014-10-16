@@ -45,10 +45,10 @@ void Packet::marshal(vector<byte>& buffer) const
         buffer.push_back(data[i]);
     byte checksum = computeChecksum(&buffer[start + 1], &buffer[buffer.size()]);
     buffer.push_back(':');
-    buffer.push_back(checksum);
-    buffer.push_back(':');
-    byte checksumInd = computeChecksumInd(checksum);
-    buffer.push_back(checksumInd);
+
+    byte marshalledChecksum[3];
+    Packet::marshalChecksum(checksum, marshalledChecksum);
+    buffer.insert(buffer.end(), marshalledChecksum, marshalledChecksum + 3);
     buffer.push_back('>');
 }
 
@@ -74,15 +74,6 @@ byte Packet::computeChecksum(byte const* begin, byte const* end)
         result = result ^ *begin;
     }
     return result;
-}
-
-byte Packet::computeChecksumInd(byte checksum)
-{
-    if (checksum == 0x3C)
-        return '0';
-    if (checksum == 0x3E)
-        return '1';
-    return 'G';
 }
 
 std::string Packet::kongsberg_com(boost::uint8_t const* buffer, int buffer_size)
@@ -135,16 +126,11 @@ int Packet::extractPacket(byte const* buffer, int size)
         return -1;
     if (buffer[7 + length + 4] != BRACKET_CLOSE)
         return -1;
-    byte checksum    = buffer[7 + length + 1];
-    if (checksum != computeChecksum(&buffer[1], &buffer[7 + length]))
+
+    byte expectedChecksum = computeChecksum(&buffer[1], &buffer[7 + length]);
+    if (!Packet::compareChecksum(expectedChecksum, &buffer[7 + length + 1]))
     {
         LOG_DEBUG_S << "packet failed checksum test";
-        return -1;
-    }
-    byte checksumInd = computeChecksumInd(checksum);
-    if (checksumInd != buffer[7 + length + 3])
-    {
-        LOG_DEBUG_S << "packet failed checksumInd test";
         return -1;
     }
 
@@ -248,5 +234,48 @@ string Packet::parseNACKError(byte errorByte)
         }
     }
     return result;
+}
+
+void Packet::marshalChecksum(byte checksum, byte* buffer)
+{
+    buffer[1] = ':';
+    if (checksum == 0x3C)
+    {
+        buffer[0] = 0xFF;
+        buffer[2] = '0';
+    }
+    else if (checksum == 0x3E)
+    {
+        buffer[0] = 0xFF;
+        buffer[2] = '1';
+    }
+    else
+    {
+        buffer[0] = checksum;
+        buffer[2] = 'G';
+    }
+}
+
+bool Packet::compareChecksum(byte expected, byte const* buffer)
+{
+    byte const cG = 'G';
+    byte const c0 = '0';
+    byte const c1 = '1';
+    byte const cColon = ':';
+
+    if (buffer[1] != cColon)
+        return false;
+
+    if (buffer[2] == cG)
+        return (buffer[0] == expected);
+    else if (buffer[0] == 0xFF)
+    {
+        if (buffer[2] == c0)
+            return (0x3C == expected);
+        else if (buffer[2] == c1)
+            return (0x3E == expected);
+        else return false;
+    }
+    else return false;
 }
 

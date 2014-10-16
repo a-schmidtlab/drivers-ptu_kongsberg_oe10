@@ -47,8 +47,21 @@ namespace ptu_kongsberg_oe10
         /** Compute the checksum byte */
         static byte computeChecksum(byte const* begin, byte const* end);
 
-        /** Compute the checksum ind byte */
-        static byte computeChecksumInd(byte checksum);
+        /** Marshals a checksum value in the format expected by the protocol
+         *
+         * This is necessary as the protocol marshals the checksum in two bytes
+         * in case the checksum takes the values ':' and '>' which are used as
+         * field separators
+         */
+        static void marshalChecksum(byte checksum, byte* buffer);
+
+        /** Compare an expected checksum with the values encoded in a message
+         *
+         * This is necessary as the protocol marshals the checksum in two bytes
+         * in case the checksum takes the values ':' and '>' which are used as
+         * field separators
+         */
+        static bool compareChecksum(byte expected, byte const* buffer);
 
         /** Gives information about the presence of a packet in the provided
          * buffer
