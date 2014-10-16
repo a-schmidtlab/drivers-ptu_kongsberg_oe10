@@ -55,6 +55,14 @@ void Packet::marshal(vector<byte>& buffer) const
 float Packet::parseAngle(byte const* buffer)
 {
     // Verify range
+    //
+    // NOTE: we workaround a PTU bug here, in which 999 and three zero bytes
+    // really mean '0'
+    if (buffer[0] == 0 && buffer[1] == 0 && buffer[2] == 0)
+        return 0;
+    if (buffer[0] == '9' && buffer[1] == '9' && buffer[2] == '9')
+        return 0;
+
     for (int i = 0; i < 3; ++i)
     {
         char c = static_cast<char>(buffer[i]);
