@@ -55,10 +55,10 @@ Packet Driver::readResponse(Packet const& cmd, int expectedSize)
     response.validateResponseFor(cmd);
     if (response.data_size != (expectedSize + cmd.command_size))
     {
-        throw std::runtime_error("expected response with " +
+        throw std::runtime_error("expected response to " + cmd.getCommandAsString() + " with " +
                 lexical_cast<string>(expectedSize) +
                 " bytes of data, but got " +
-                lexical_cast<string>(response.data_size));
+                lexical_cast<string>(static_cast<int>(response.data_size)));
     }
     memmove(response.data,
             response.data + cmd.command_size,
