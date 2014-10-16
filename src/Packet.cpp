@@ -54,16 +54,33 @@ void Packet::marshal(vector<byte>& buffer) const
 
 float Packet::parseAngle(byte const* buffer)
 {
-    int scale[3] = { 100, 10, 1 };
-    float angle = 0;
+    // Verify range
     for (int i = 0; i < 3; ++i)
     {
         char c = static_cast<char>(buffer[i]);
         if (c < '0' || c > '9')
-            throw std::runtime_error("ASCII angle representation not in the 0-9 range");
-        angle += (c - '0') * scale[i];
+            throw std::runtime_error("ASCII angle representation not in the 0-9 range (got " + lexical_cast<string>(static_cast<int>(c)) + ")");
     }
+
+    float angle =
+        (static_cast<char>(buffer[0]) - '0') * 100 +
+        (static_cast<char>(buffer[1]) - '0') * 10 +
+        (static_cast<char>(buffer[2]) - '0') * 1;
     return angle * M_PI / 180;
+}
+
+void Packet::encodeAngle(byte* buffer, float angle)
+{
+    int degrees = angle * 180 / M_PI;
+    if (degrees < 0 || degrees > 270)
+        throw std::range_error("angles must be in [0, 270], got " + lexical_cast<string>(degrees));
+
+    int hundreds = static_cast<int>(degrees / 100);
+    int tens     = static_cast<int>(degrees / 10) % 10;
+    int units    = static_cast<int>(degrees) % 10;
+    buffer[0] = static_cast<byte>('0' + hundreds);
+    buffer[1] = static_cast<byte>('0' + tens);
+    buffer[2] = static_cast<byte>('0' + units);
 }
 
 byte Packet::computeChecksum(byte const* begin, byte const* end)

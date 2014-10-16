@@ -44,6 +44,9 @@ namespace ptu_kongsberg_oe10
         /** Parse a 3-byte representation of an angle */
         static float parseAngle(byte const* buffer);
 
+        /** Generates the 3-byte representation of an angle */
+        static void encodeAngle(byte* buffer, float angle);
+
         /** Compute the checksum byte */
         static byte computeChecksum(byte const* begin, byte const* end);
 

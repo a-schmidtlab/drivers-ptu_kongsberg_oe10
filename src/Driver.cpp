@@ -49,6 +49,79 @@ Status Driver::getStatus(int device_id)
     return status;
 }
 
+void Driver::requestPanTiltStatus(int device_id)
+{
+    Packet packet(device_id);
+    packet.setCommand('A', 'S');
+    writePacket(packet);
+}
+
+PanTiltStatus Driver::readPanTiltStatus(int device_id)
+{
+    Packet packet(device_id);
+    packet.setCommand('A', 'S');
+    Packet response = readResponse(packet, 10);
+
+    PanTiltStatus status;
+    status.time = base::Time::now();
+    status.pan_speed  = static_cast<float>(response.data[0]) / 0x64;
+    status.tilt_speed = static_cast<float>(response.data[1]) / 0x64;
+    status.pan  = Packet::parseAngle(response.data + 2);
+    status.tilt = Packet::parseAngle(response.data + 5);
+    status.uses_pan_stop  = (response.data[8] == 0x31);
+    status.uses_tilt_stop = (response.data[9] == 0x31);
+    return status;
+}
+
+PanTiltStatus Driver::getPanTiltStatus(int device_id)
+{
+    requestPanTiltStatus(device_id);
+    return readPanTiltStatus(device_id);
+}
+
+void Driver::setPanPosition(int device_id, float pan)
+{
+    return setPosition(device_id, 'P', pan);
+}
+
+void Driver::setTiltPosition(int device_id, float tilt)
+{
+    return setPosition(device_id, 'T', tilt);
+}
+
+void Driver::setPosition(int device_id, char axis, float angle)
+{
+    Packet packet(device_id);
+    packet.setCommand(axis, 'P');
+    packet.data_size = 3;
+    Packet::encodeAngle(packet.data, angle);
+    writePacket(packet);
+    readResponse(packet, 3);
+}
+
+void Driver::setPanSpeed(int device_id, float speed)
+{
+    setSpeed(device_id, 'D', 'S', speed);
+}
+
+void Driver::setTiltSpeed(int device_id, float speed)
+{
+    setSpeed(device_id, 'T', 'A', speed);
+}
+
+void Driver::setSpeed(int device_id, char cmd0, char cmd1, float speed)
+{
+    if (speed < 0 || speed > 1)
+        throw std::range_error("invalid range for speed, should be in [0,1] and got " + lexical_cast<string>(speed));
+
+    Packet packet(device_id);
+    packet.setCommand(cmd0, cmd1);
+    packet.data_size = 1;
+    packet.data[0] = round(speed * 0x64);
+    writePacket(packet);
+    readResponse(packet, 0);
+}
+
 Packet Driver::readResponse(Packet const& cmd, int expectedSize)
 {
     Packet response = readPacket();
