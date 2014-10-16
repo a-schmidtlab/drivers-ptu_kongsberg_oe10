@@ -44,8 +44,8 @@ Status Driver::getStatus(int device_id)
 
     float pan  = Packet::parseAngle(response.data + 3);
     float tilt = Packet::parseAngle(response.data + 6);
-    status.pan = base::Angle::fromRad(pan);
-    status.tilt = base::Angle::fromRad(tilt);
+    status.pan = pan;
+    status.tilt = tilt;
     return status;
 }
 

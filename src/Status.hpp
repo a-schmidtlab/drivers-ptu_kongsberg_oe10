@@ -2,7 +2,6 @@
 #define PTU_KONGSBERG_OE10_STATUS_HPP
 
 #include <base/Time.hpp>
-#include <base/Angle.hpp>
 #include <base/Temperature.hpp>
 
 namespace ptu_kongsberg_oe10
@@ -41,8 +40,8 @@ namespace ptu_kongsberg_oe10
         base::Temperature temperature;
         float humidity;
 
-        base::Angle pan;
-        base::Angle tilt;
+        float pan;
+        float tilt;
     };
 }
 
