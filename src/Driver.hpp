@@ -26,6 +26,10 @@ namespace ptu_kongsberg_oe10
         void setPanSpeed(int device_id, float speed);
         void setTiltSpeed(int device_id, float speed);
 
+	double tiltUp(int device_id);
+	double tiltDown(int device_id);
+	double tiltStop(int device_id);
+
     protected:
         /** Read the response of a command and validates it
          *
@@ -38,6 +42,7 @@ namespace ptu_kongsberg_oe10
 
         void setPosition(int device_id, char axis, float angle);
         void setSpeed(int device_id, char cmd0, char cmd1, float speed);
+        double simpleMovement(int device_id, char cmd0, char cmd1);
 
         void writePacket(Packet const& packet);
         Packet readPacket();

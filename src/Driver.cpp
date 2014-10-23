@@ -89,6 +89,30 @@ void Driver::setTiltPosition(int device_id, float tilt)
     return setPosition(device_id, 'T', tilt);
 }
 
+double Driver::tiltUp(int device_id)
+{
+    return simpleMovement(device_id, 'T', 'U');
+}
+
+double Driver::tiltDown(int device_id)
+{
+    return simpleMovement(device_id, 'T', 'D');
+}
+
+double Driver::tiltStop(int device_id)
+{
+    return simpleMovement(device_id, 'T', 'S');
+}
+
+double Driver::simpleMovement(int device_id, char cmd0, char cmd1)
+{
+    Packet packet(device_id);
+    packet.setCommand(cmd0, cmd1);
+    writePacket(packet);
+    Packet response = readResponse(packet, 3);
+    return Packet::parseAngle(response.data);
+}
+
 void Driver::setPosition(int device_id, char axis, float angle)
 {
     Packet packet(device_id);
