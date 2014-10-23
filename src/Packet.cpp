@@ -212,7 +212,7 @@ void Packet::validateResponseFor(Packet const& cmd)
         if (data[i] != cmd.command[i])
             throw std::runtime_error("expected a ACK/NAK for command " +
                     cmd.getCommandAsString() + " but got it for " +
-                    string(reinterpret_cast<char const*>(cmd.data), static_cast<string::size_type>(cmd.command_size)));
+                    string(reinterpret_cast<char const*>(data), static_cast<string::size_type>(cmd.command_size)));
     }
 
     if (command[0] == NAK)
