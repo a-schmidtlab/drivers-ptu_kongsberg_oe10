@@ -14,6 +14,46 @@ Driver::Driver()
     setWriteTimeout(base::Time::fromSeconds(2));
 }
 
+void Driver::useEndStops(int device_id, bool enable)
+{
+    Packet packet(device_id);
+    packet.setCommand('E', 'S');
+    packet.data_size = 1;
+    packet.data[0] = enable ? 0x31 : 0x30;
+    writePacket(packet);
+    Packet response = readResponse(packet, 1);
+    if (response.data[2] != packet.data[0])
+        throw std::runtime_error("boolean in the reply for use end stops command mismatches the sent command");
+}
+
+void Driver::setPanPositiveEndStop(int device_id)
+{
+    setEndStop(device_id, 'A', 'W');
+}
+
+void Driver::setPanNegativeEndStop(int device_id)
+{
+    setEndStop(device_id, 'C', 'W');
+}
+
+void Driver::setTiltPositiveEndStop(int device_id)
+{
+    setEndStop(device_id, 'D', 'T');
+}
+
+void Driver::setTiltNegativeEndStop(int device_id)
+{
+    setEndStop(device_id, 'U', 'T');
+}
+
+void Driver::setEndStop(int device_id, char cmd0, char cmd1)
+{
+    Packet packet(device_id);
+    packet.setCommand(cmd0, cmd1);
+    writePacket(packet);
+    readResponse(packet, 0);
+}
+
 Status Driver::getStatus(int device_id)
 {
     Packet packet(device_id);

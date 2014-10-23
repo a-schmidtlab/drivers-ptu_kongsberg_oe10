@@ -20,6 +20,12 @@ namespace ptu_kongsberg_oe10
         PanTiltStatus readPanTiltStatus(int device_id);
         PanTiltStatus getPanTiltStatus(int device_id);
 
+        void useEndStops(int device_id, bool enable);
+        void setPanPositiveEndStop(int device_id);
+        void setPanNegativeEndStop(int device_id);
+        void setTiltPositiveEndStop(int device_id);
+        void setTiltNegativeEndStop(int device_id);
+
         void setPanPosition(int device_id, float pan);
         void setTiltPosition(int device_id, float tilt);
 
@@ -43,6 +49,7 @@ namespace ptu_kongsberg_oe10
         void setPosition(int device_id, char axis, float angle);
         void setSpeed(int device_id, char cmd0, char cmd1, float speed);
         double simpleMovement(int device_id, char cmd0, char cmd1);
+        void setEndStop(int device_id, char cmd0, char cmd1);
 
         void writePacket(Packet const& packet);
         Packet readPacket();
