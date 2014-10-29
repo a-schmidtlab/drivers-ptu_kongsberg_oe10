@@ -28,22 +28,22 @@ void Driver::useEndStops(int device_id, bool enable)
 
 void Driver::setPanPositiveEndStop(int device_id)
 {
-    setEndStop(device_id, 'A', 'W');
+    setEndStop(device_id, 'C', 'W');
 }
 
 void Driver::setPanNegativeEndStop(int device_id)
 {
-    setEndStop(device_id, 'C', 'W');
+    setEndStop(device_id, 'A', 'W');
 }
 
 void Driver::setTiltPositiveEndStop(int device_id)
 {
-    setEndStop(device_id, 'D', 'T');
+    setEndStop(device_id, 'U', 'T');
 }
 
 void Driver::setTiltNegativeEndStop(int device_id)
 {
-    setEndStop(device_id, 'U', 'T');
+    setEndStop(device_id, 'D', 'T');
 }
 
 void Driver::setEndStop(int device_id, char cmd0, char cmd1)
