@@ -80,8 +80,8 @@ float Packet::parseAngle(byte const* buffer)
 void Packet::encodeAngle(byte* buffer, float angle)
 {
     int degrees = angle * 180 / M_PI;
-    if (degrees < 0 || degrees > 270)
-        throw std::range_error("angles must be in [0, 270], got " + lexical_cast<string>(degrees));
+    if (degrees < 0 || degrees > 360)
+        throw std::range_error("angles must be in [0, 360], got " + lexical_cast<string>(degrees));
 
     int hundreds = static_cast<int>(degrees / 100);
     int tens     = static_cast<int>(degrees / 10) % 10;
