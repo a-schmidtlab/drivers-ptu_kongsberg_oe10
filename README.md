@@ -1,4 +1,4 @@
-# PTU Kongsberg OE10 Driver
+# Kongsberg OE10 Driver
 
 ## Overview
 This software provides a driver implementation for controlling the Kongsberg OE10 Pan-Tilt Unit (PTU), a precision positioning system commonly used in marine and industrial applications. The driver enables precise control over pan and tilt movements while providing comprehensive status monitoring capabilities.
